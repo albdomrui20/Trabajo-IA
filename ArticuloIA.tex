@@ -12,16 +12,16 @@
 
 \title{Plantilla para un artículo \LaTeX}
 \author{
-  LastName1, FirstName1\\
-  \small Universidad Autónoma Metropolitana\\
-  \small stephmigoni@gmail.com\\
-  \small Ciudad de México
+  Domínguez-Adame Ruiz, Alberto\\
+  \small Universidad de Sevilla\\
+  \small albdomrui@alum.us.es\\
+  \small Sevilla
   \date{}
   \and
-  LastName2, FirstName2\\
-  \small Universidad Autónoma Metropolitana\\
-  \small stephmigoni@gmail.com\\
-  \small Ciudad de México
+ Vilaplana de Trias, Francisco David\\
+  \small Universidad de Sevilla\\
+  \small fravilde1i@alum.us.es\\
+  \small Sevilla
   \date{}
 }
 
@@ -48,21 +48,21 @@ Esta es una plantilla simple para crear un articulo \LaTeX en español, con algu
 
 ¡Tu introducción va aquí! A continuación, se enumeran algunos ejemplos de comandos y funciones de uso común para ayudarte a comenzar.
 
-\section{Algunos ejempllos para comenzar}
+\section{Modelos}
 
-\subsection{¿Cómo incluir figuras?}
+\subsection{KNN}
 
 Primero tienes que cargar el archivo de imagen desde su computadora usando el enlace de carga del menú del proyecto. Luego usando el comando 'includegraphics' podrás incluirlo en el documento. Con el entorno de figura y el comando de título podrás agregar un número y un título a la figura. Mira el código de la Figura \ref{fig:tesla} en esta sección para ver un ejemplo.
 
 
 \begin{figure} % opción de posicionamiento
     \centering
-    \includegraphics[width=0.5\textwidth]{../eh2}
+    \includegraphics[width=0.5\textwidth]{../pepe}
     \caption{\label{fig:tesla}Pie de imagen}
 \end{figure}
 
 
-\subsection{¿Cómo añadir comentarios?}
+\subsection{Naive Bayes}
 % * <stephmigoni@gmail.com> 2018-02-08T19:23:33.559Z:
 % 
 % Esto es un comentario de prueba
@@ -75,7 +75,7 @@ Para responder a un comentario, simplemente da click en Reply en Rich Text.
 
 También pueden añadirse comentarios en el margen del pdf compilado con el comando todo, como se muestra en el ejemplo de la derecha. También puedes añadirlos dentro del texto:
 
-\subsection{¿Cómo añadir tablas en mi \TeX?}
+\subsection{Árboles de Decisión}
 
 Usa los comandos table y tabular para iniciar una tabla simple --- mira la tabla~\ref{tab:tabla ejemplo}, como ejemplo. 
 
@@ -90,7 +90,7 @@ Izquierda & 13 & Derecha
 \caption{\label{tab:tabla ejemplo}Una simple tabla.}
 \end{table}
 
-\subsection{¿Cómo escribir (expresiones) Matemáticas?}
+\subsection{Redes Neuronales}
 
 \LaTeX{} es buenísimo para escribir ecuaciones. Para escribir variables o ecuaciones dentro del texto lo podemos poner entre signos de pesos y luego podemos seguir escribiendo, esto funciona si queremos escribir un símbolo como $\nabla$, $\pi$, $\beta$, $\Omega$, $\aleph$, etc.
 \begin{equation}
@@ -118,7 +118,7 @@ donde $U_{m}^{\ell}$ es un elemento de la matriz unitaria $\mathbf{U}$.
 
 
 
-\subsection{¿Cómo añadir listas?}
+\section{Resultados}
 
 Puedes añadir listas con numeración automática \dots
 
@@ -131,6 +131,13 @@ Puedes añadir listas con numeración automática \dots
 \item Como este,
 \item y como este.
 \end{itemize}
+
+
+
+\section{Conclusiones}
+
+\section{Bibliografía}
+
 
 
 \end{document}
