@@ -15,6 +15,11 @@
 % Escritura mejorada de citas bibliográficas
 \usepackage{cite}
 
+% Hacer hipervínculos
+\usepackage{hyperref}
+
+% Para la funcion indicador
+\usepackage{bbm}
 
 % Macros traducidas
 \def\contentsname{Índice general}
@@ -96,7 +101,7 @@ Para la realización de este trabajo se ha hecho uso del entorno de desarrollo J
 Los modelos de clasificación usados son: KNN, Naive Bayes, Árboles de Decisión y Redes Neuronales.
 
 \section{Conjunto de datos y Tarea de predicción a realizar}
-]Hemos elegido un dataset ( fíjese en la Figure \ref{fig:dataset}) de la página de streamings en directo twitch.tv , en la que se ve: las visitas, días (ambos de tipo entero) que transmitido un canal en directo, si tiene contrato o no con twitch (partner de tipo Boolean) y si el contenido del canal (id de tipo Integer) es o no para adultos (mature de tipo Boolean). Al ser la propia Twitch la que ofrece este contrato, hemos decidido que la predicción para nuestros modelos sea el atributo partner (true/false). Las aristas (edges) representan si dos usuarios tienen una relación de amistad.
+Hemos elegido un dataset (fíjese en la Fig. \ref{fig:dataset}) de la página de streamings en directo twitch.tv, en la que se ve: las visitas, días (ambos de tipo entero) que transmitido un canal en directo, si tiene contrato o no con twitch (partner de tipo Boolean) y si el contenido del canal (id de tipo Integer) es o no para adultos (mature de tipo Boolean). Al ser la propia Twitch la que ofrece este contrato, hemos decidido que la predicción para nuestros modelos sea el atributo partner (true/false). Las aristas (edges) representan si dos usuarios tienen una relación de amistad.
 
 \begin{figure} % opción de posicionamiento
     \centering
@@ -115,18 +120,40 @@ Para este estudio hemos decidido que el atributo a predecir será partner. Para 
 Como este es un trabajo de desarrollo de modelos orientados al aprendizaje automático grafos, hemos elegido una serie de métricas relacionales que aplicaremos como atributos relacionales. En concreto hemos elgido tres métricas:
 
 \begin{enumerate}
-\item\textbf{Betweenness centrality}  (Centralidad de intermediación): La centralidad en un grafo puede ser entendida como una medida que determina la relevancia de un nodo dentro del grafo y permite comparar o contrastar dicho vértice con otros. La Betweenness Centrality es una medida de centralidad que cuantifica la frecuencia en la que un nodo se encuentra en el camino más corto entre dos nodos determinados. Cuando en un grafo existen nodos de alta intermediación, estos suelen jugar un rol importante en la estructura a la que pertenecen. Estos nodos también poseen capacidades de ser controladores o reguladores de los flujos de información dentro de la estructura total del grafo. 
+\item\textbf{Betweenness centrality} (Centralidad de intermediación): La centralidad en un grafo puede ser entendida como una medida que determina la relevancia de un nodo dentro del grafo y permite comparar o contrastar dicho vértice con otros. La Betweenness Centrality es una medida de centralidad que cuantifica la frecuencia en la que un nodo se encuentra en el camino más corto entre dos nodos determinados. Cuando en un grafo existen nodos de alta intermediación, estos suelen jugar un rol importante en la estructura a la que pertenecen. Estos nodos también poseen capacidades de ser controladores o reguladores de los flujos de información dentro de la estructura total del grafo. 
 \item\textbf{Clustering} (agrupamiento): es una tarea que tiene como finalidad principal lograr el agrupamiento de nodos, para lograr construir subconjuntos de datos conocidos como Clusters.
 \item\textbf{Degree} (grado): Número de aristas (relaciones) que inciden sobre el nodo.
 \end{enumerate}
  
 \section{Algoritmos de Aprendizaje Automático}
+A continuación exponemos los algoritmos que hemos utilizado con nuestro dataset:
 
 \subsection{KNN}
+El algoritmo kNN (del inglés \emph{k Nearest Neighbors}, k vecinos más cercanos), es un clasificador de aprendizaje supervisado no paramétrico, por lo que la cantidad de parámetros del modelo coincide exactamente con la cantidad de ejemplos de entrenamiento. Se basa en la proximidad de los k nodos más cercanos calculando la cercanía a partir de los atributos, si estos fueran discretos sería necesaria una codificación de los mismo. 
 
-Primero tienes que cargar el archivo de imagen desde su computadora usando el enlace de carga del menú del proyecto. Luego usando el comando 'includegraphics' podrás incluirlo en el documento. Con el entorno de figura y el comando de título podrás agregar un número y un título a la figura. Mira el código de la Figura \ref{fig:tablaEj} en esta sección para ver un ejemplo.
+Analizando nuestro dataset, se puede observar como el atributo "\emph{views}" toma valores de mayor magnitud con respecto al resto lo que provoca que tenga más en cuenta para la predicción del modelo. Con el fin de evitar esta situación se hace uso de la normalización a los atributos del conjunto de entrenamiento. Existe una gran variedad de maneras de normalizar un atributo numérico, nosotros hemos optado por el método min-max \cite{b1} que consiste en que a cada atributo restarle el valor mínimo de este y dividir esta diferencia entre la resta del valor máximo y mínimo: 
 
+\begin{equation}
+v_{i}' = \frac{v_{i} - m}{M - m}
+\end{equation}
 
+Para realizar kNN es necesario dar un valor al hiperparámetro k, referido al número de vecinos que se va a tener en cuenta a la hora de clasificar un nuevo dato, nosotros le hemos dado valores del uno al diez para más tarde evaluar el rendimiento de cada uno y elegir el mejor. También existen métodos para calcular la distancia, en nuestro caso hemos usado:
+\begin{itemize}
+\item Distancia de \emph{Hamming} para el dataset sin atributos relacionales:
+\begin{equation}
+d(\textbf{x},\textbf{x}') = \sum_{i=1}^n \mathbbm{1}{(x_{i}\neq{x_{i}'})}
+\end{equation}
+Hemos usado esta métrica ya que según la docmentación de la librería \cite{b2} es la recomendada para valores enteros.
+\\
+\item Distancia \emph{Manhattan} para el dataset con atributos relacionales:
+\begin{equation}
+d(\textbf{x},\textbf{x}') = \sum_{i=1}^n |x_{i} - x_{i}'|
+\end{equation}
+En este caso es la adecuada al tratarse de valores numéricos reales.
+\end{itemize}
+
+Para el cálculo del modelo ha sido necesaria la clase neighbors de la librería sklearn.
+Por último, una vez se ha construido el modelo lo evaluamos mediante validación cruzada (cross validation) con 10 pliegues. Se divide el dataset según el numero de pliegues, siendo uno de estos el que se usará para probar el modelo y el resto para entrenarlo, de tal manera que cada pliegue acabe siendo usado como subconjunto de prueba. Cada una de estas iteraciones dará como resultado una tasa de acierto, la media de estas será el valor asociado a cada k. Por último se comparan y se escoge el valor de k que obtuviera la media la más alta.
 
 \subsection{Naive Bayes}
 % * <stephmigoni@gmail.com> 2018-02-08T19:23:33.559Z:
@@ -193,13 +220,8 @@ trabajo futuro.
 
 \section{Bibliografía}
 \begin{thebibliography}{00}
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
-\bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
-\bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
-\bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
-\bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
-\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
+\bibitem{b1} \url{https://scikit-learn.org/stable/modules/preprocessing.html#normalization}
+\bibitem{b2} \url{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.DistanceMetric.html}
 \end{thebibliography}
 
 
