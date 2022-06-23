@@ -21,6 +21,9 @@
 % Para la funcion indicador
 \usepackage{bbm}
 
+% Símbolos matemticos
+\usepackage{mathrsfs}
+
 % Macros traducidas
 \def\contentsname{Índice general}
 \def\listfigurename{Índice de figuras}
@@ -153,30 +156,74 @@ En este caso es la adecuada al tratarse de valores numéricos reales.
 \end{itemize}
 
 Para el cálculo del modelo ha sido necesaria la clase neighbors de la librería sklearn.
-Por último, una vez se ha construido el modelo lo evaluamos mediante validación cruzada (cross validation) con 10 pliegues. Se divide el dataset según el numero de pliegues, siendo uno de estos el que se usará para probar el modelo y el resto para entrenarlo, de tal manera que cada pliegue acabe siendo usado como subconjunto de prueba. Cada una de estas iteraciones dará como resultado una tasa de acierto, la media de estas será el valor asociado a cada k. Por último se comparan y se escoge el valor de k que obtuviera la media la más alta.
+Por último, una vez se ha construido el modelo lo evaluamos mediante validación cruzada (cross validation) con 10 pliegues. Se divide el dataset según el numero de pliegues, siendo uno de estos el que se usará para probar el modelo y el resto para entrenarlo, de tal manera que cada pliegue acabe siendo usado como subconjunto de prueba. Cada una de estas iteraciones dará como resultado una tasa de acierto, la media de estas será el valor asociado a cada k. Finalmente se comparan y se escoge el valor de k que obtuviera la media la más alta.
 
 \subsection{Naive Bayes}
-% * <stephmigoni@gmail.com> 2018-02-08T19:23:33.559Z:
-% 
-% Esto es un comentario de prueba
-% 
-% 
+Naive Bayes se trata de un modelo de clasificación paramétrico, ya que no depende de la cantidad de ejemplos que contega el conjunto de entrenamiento. Los valores deben ser discretos, y en caso contrario deberán someterse a un proceso de discretización, donde se divide el rango de los valores de los atributos en subintervalos, los cuales constituiran los posibles valores de la variable discretizada. En nuestro era necesaria la discretización al tratarse de enteros con una gran diferencia entre los valores.
+Para realizar la tarea de clasificación se aprende primero los siguientes valores de los parámetros:
+\begin{itemize}
+\item La probabilidad de cada clase c:
+\begin{equation}
+\mathbbm{P}(c) = \frac{ N_{c}}{N}
+\end{equation}
+Donde $N_{c}$ es la cantidad total de ejemplos que pertenecen a la clase c, y N la cantidad total de los ejemplos que hay en el conjunto de entrenamiento.
+\\ 
+\item La probabilidad de para cada atributo X, cada posible valor de x el atributo y cada clase c:
+\begin{equation}
+\mathbbm{P}(X = x | c) = \frac{N_{X=x,c}}{N{c}}
+\end{equation}
+Donde $N_{X=x,c}$  es la cantidad total de ejemplos del conjunto de entrenamiento que pertenecen a la clase c en los que el atributo X toma el valor x.
+\end{itemize}
+
+A la hora de discretizar los atributos hemos usado KBinsDiscretizer \cite{b3}, de la libretria sklearn. Para los parámetros usamos una codificación one-hot, ya que algunos atributos tiene valores numéricos muy elevados comparados con otros. Por esta razón hemos elgido esta codificación, pues proporciona mejor resultado que otras (como por ejemplo la de tipo ordinal).
+
+A la hora de construir el modelo se ha usado MultinomialNB(alpha=k)  \cite{b4}, pues es el más apropiado para clasificación de atributos numéricos discretizados. El hiperparámetro usado, k, se usa para realizar el suavizado de Laplace. Dicho suavizado se realiza cuando alguna de las probabilidades calculadas para una clase c toma el valor 0, haciendo que un ejemplo nunca se clasifique en dicha clase c. La fórmula que nos indica el suavizado de Laplace es la siguiente:
+\begin{equation}
+\mathbbm{P}(X = x | c) = \frac{N_{X=x,c}+1}{N_{c} + k|X|}
+\end{equation}
+
+Para la evaluación de este modelo también hemos usado el método de validación cruzada con 10 pliegues.
 
 \subsection{Árboles de Decisión}
 
-Usa los comandos table y tabular para iniciar una tabla simple --- mira la tabla~\ref{tab:tabla ejemplo}, como ejemplo. 
+Los Árboles de Clasificación y regresión (del inglés CART, clasification and regresion tree) son modelos para adecuados para tareas de tanto de clasificación como de regresión dados atributos necesariamente numéricos, ya sean continuos o discretos.En un CART cada nodo interno está etiquetado con un atributo y un valor umbral para dicho atributo, mientras que cada hoja está etiquetada con una clase si es una tarea de clasificación, o un número en caso de que se trate de una tarea de regresión.  Dado nuestro conjunto de datos, la tarea a abordar es una de clasificación, por lo que elegimos el tipo de árbol correspondiente.
 
-\begin{table}
-\centering
-\begin{tabular}{l c r} 
-%nùmero de columnas: 3
-l para left & c para centro & r para derecha \\ \hline
-Ejemplo & Centrado & Alineado a la\\
-Izquierda & 13 & Derecha
-\end{tabular}
-\caption{\label{tab:tabla ejemplo}Una simple tabla.}
-\end{table}
+El algoritmo CART para el aprendizaje del modelo es tal que dado un conjunto de ejemplos de entrenamiento $\mathscr{D}$, denotamos  $\mathscr{D}_n$ al subconjunto de ejemplos que satisfacen  todas las condiciones de los nodos desde la raíz hasta hasta n. Dado un nodo $n$ un atributo $X$, siendo $x_1$, $x_2$, ... , $x_k$  la secuencia de distintos valores que toma $X$ en $\mathscr{D}_n$, estando estos ordenados de menor a mayor. Siendo $u_i = \frac{(x_i + x_{i+1})}{2} $ el umbral candidato para $X$ y con $i$ en el rango $(1, 2, ..., k-1)$. A continuación se divide  $\mathscr{D}_n$ según el umbral. Si los ejemplos de $X$ toman un valor menor o igual que $u$ estos se agrupan en  $\mathscr{D}_n^{Izq}$, mientras que si son mayores que $u$ se agruparan en en el subconjunto $\mathscr{D}_n^{Der}$. Por último, se hace uso de una función $I$ que permite medir la impureza de un conjunto de ejemplos, para poder elegir el par $(X, u)$ que nos de una mejor partición de  $\mathscr{D}_n$, siendo dicha función:
 
+\begin{equation}
+\textbf{arg mín  } \frac{|\mathscr{D}_{n}^{Izq}|}{|\mathscr{D}|}I(\mathscr{D}_{n}^{Izq})+ \frac{|\mathscr{D}_{n}^{Der}|}{|\mathscr{D}|}I(\mathscr{D}_{n}^{Der})
+\end{equation}
+
+Una representación del algoritmo sería:
+
+\begin{pseudo}*
+    \hd{CART}(\mathscr{D}) \\
+    \textbf{Si} \textnormal{\fn{NODIVISIBLE($\mathscr{D}$)}} \textbf{entonces} \\+
+    \textbf{Devolver} \textnormal{un nodo etiquetado con \fn{ETIQUETA}(\mathscr{D})} \\-
+    Si no entonces \\+
+    \(\textnormal{Elegir el par $(X, u)$ que proporcione la mejor partición $(\mathscr{D}^{Izq},\mathscr{D}^{Der})$ de $\mathscr{D}$}\) \\
+    \( T_{1} \leftarrow \textnormal{CART($\mathscr{D}^{Izq}$)}\) \\
+    \( T_{2} \leftarrow \textnormal{CART($\mathscr{D}^{Der}$)}\) \\
+    \(\textbf{Devolver } \textnormal{un nodo etiquetado con ($X, u$) y cuyos hijos sean $T_{1}$  y $T_{2}$}\)\\
+ \end{pseudo}
+
+
+
+\begin{figure} % opción de posicionamiento
+    \centering
+    \includegraphics[width=0.5\textwidth]{./ImagenesMemoria/Arbol}
+    \caption{\label{fig:arbolDecision}Árbol de Decisión}
+\end{figure}
+
+ La función de impureza usada para una tarea de clasificación suele serel índice de Gini, pues estima la probabilidad de clasificar incorrectamente un ejemplo. Tal que: 
+\begin{equation}
+G(\mathscr{D}) = \sum_{c\in C} \hat{\pi}_c (1-  \hat{\pi}_c) = 1 -  \sum_{c\in C}  \hat{\pi}_c^2
+\end{equation}
+
+Para abordar esta tarea hemos hecho uso de las librerías sklearn y matplotlib para mostrar el árbol resultado por pantalla. Dada la naturaleza hemos decidido usar la función DecisionTreeClassifier de la clase tree, puesto que nos proporciona un árbol de decisión el cual ha sido limitado a una profundidad máxima de 5. Para terminar, realizamos una evaluación del modelo mediante el método score, que calcula el rendimiento del modelo, dados por separado el conjunto de ejemplos de prueba y la clase de cada uno de estos ejemplos.
+
+
+\subsection{Redes Neuronales}
 
 
 \section{Resultados}
@@ -194,19 +241,7 @@ resultados conseguidos:
 
 Se pueden hacer uso de tablas, como el ejemplo de la tabla~\ref{tab:ejemplo}.
 
-\begin{table}
-  \caption{Ejemplo de tabla}
-  \label{tab:ejemplo}
-  \centering
-  \begin{tabular}{ccc}
-    \toprule
-    A & B & C \\
-    \midrule
-    1 & 2 & 3 \\
-    4 & 5 & 6 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+
 
 
 \section{Conclusiones}
@@ -222,6 +257,9 @@ trabajo futuro.
 \begin{thebibliography}{00}
 \bibitem{b1} \url{https://scikit-learn.org/stable/modules/preprocessing.html#normalization}
 \bibitem{b2} \url{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.DistanceMetric.html}
+\bibitem{b3} \url{https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.KBinsDiscretizer.html}
+\bibitem{b4} \url{https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html}
+\bibitem{b5} \url{https://scikit-learn.org/stable/modules/naive_bayes.html}
 \end{thebibliography}
 
 
