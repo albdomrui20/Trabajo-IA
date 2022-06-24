@@ -201,10 +201,12 @@ Una representación del algoritmo sería:
     \textbf{Si} \textnormal{\fn{NODIVISIBLE($\mathscr{D}$)}} \textbf{entonces} \\+
     \textbf{Devolver} \textnormal{un nodo etiquetado con \fn{ETIQUETA}(\mathscr{D})} \\-
     Si no entonces \\+
-    \(\textnormal{Elegir el par $(X, u)$ que proporcione la mejor partición $(\mathscr{D}^{Izq},\mathscr{D}^{Der})$ de $\mathscr{D}$}\) \\
+    \(\textnormal{Elegir el par $(X, u)$ que proporcione la mejor} \) \\+
+    \(\textnormal{partición $(\mathscr{D}^{Izq},\mathscr{D}^{Der})$ de $\mathscr{D}$}\) \\-
     \( T_{1} \leftarrow \textnormal{CART($\mathscr{D}^{Izq}$)}\) \\
     \( T_{2} \leftarrow \textnormal{CART($\mathscr{D}^{Der}$)}\) \\
-    \(\textbf{Devolver } \textnormal{un nodo etiquetado con ($X, u$) y cuyos hijos sean $T_{1}$  y $T_{2}$}\)\\
+    \(\textbf{Devolver } \textnormal{un nodo etiquetado con ($X, u$) y cuyos}\)\\+
+    \(\textnormal{hijos sean $T_{1}$  y $T_{2}$}\)\\-
  \end{pseudo}
 
 
@@ -225,6 +227,39 @@ Para abordar esta tarea hemos hecho uso de las librerías sklearn y matplotlib p
 
 \subsection{Redes Neuronales}
 
+Las Redes Neuronales son un modelo de predicción inspirado en el funcionamiento del cerebro, permitiendo que programas informáticos reconozcan patrones y resuelvan problemas comunes en el campo de la Inteligencia Artificial, Aprendizaje Automático y Aprendizaje Profundo. Son un conjunto de neuronas artificiales, cada una ellas con un sesgo y un peso asociado e interconectadas entre sí. Se agrupan en forma de capas, una de entrada donde se reciben los datos del problema, una o varias capas ocultas y una de salida para dar la predicción según los datos introducidos. Una neurona mandará información a otra neurona de la siguiente capa si la salida de esta es superior al valor del sesgo, si no, no transmitirá informacion alguna.
+
+A la hora de entrenar el modelo se le asginarán unos valores aleatorios a los pesos de cada neurona, el peso se irá actualizando en función del siguiente algoritmo:
+
+\begin{pseudo}*
+    \\
+    \textbf{\textnormal{Inicializar los pesos aleatoriamente}} \\
+    \textbf{Repetir}\textnormal{ hasta que se cumpla la condición de terminación: }\\+
+    \textbf{Para cada}\textnormal{ ejemplo de entrenamiento}\\+
+    \textbf{Si} \textnormal{la salida del perceptrón es incorrecta entonces}\\+
+         \textnormal{Actualizar los pesos}\\---
+    \textbf{Devolver}\textnormal{ los pesos}\\
+ \end{pseudo}
+
+Cuando en el bucle del algoritmo se han considerado todos los ejemplos se dice que ha transcurrido una época.
+
+En nuestro caso (fíjese en la Fig. \ref{fig:dataset}), tenemos una capa de entrada de 3 neuronas, correspondientes a cada uno de los atributos usados para calcular el objetivo. Para la capa oculta hemos optado por un total de 10 neuronas con función de activación rectificador (ReLU). Al tratarse de un problema de clasificación binaria, la última capa de nuestra red neuronal estará compuesta por una neurona con funcion de activación sigmoide, ya que los valores de salida oscilarán entre 0 y 1. Finalmente el algoritmo nos dará una tasa de aciertos, cada usuario será clasificado como Partner (1) si esta es mayor que 0.5.
+
+Para el entrenamiento de la Red Neuronal usamos la entropía cruzada binaria como funcion de coste  y el método de descenso por el gradiente (SGD, Stochastic Gradient Descent) para actualizar los pesos en la direccion $-\nabla C$.
+
+· \emph{Binary Crossentropy}:
+\begin{equation}
+ -y log_e(a^L) - (1-y) log_e(1 - a^L)
+\end{equation}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{./ImagenesMemoria/RedNeuronal}
+    \caption{\label{fig:red}Nuestra Red Neuronal}
+\end{figure}
+
+Para la evaluación del modelo hemos dividido los datos en dos subconjuntos de prueba y entrenamiento en un 25\% y un 75\% respectivamente, aportándonos unos resultados con un rendimiento excelente.
+
 
 \section{Resultados}
 
@@ -239,7 +274,6 @@ resultados conseguidos:
   conclusiones.
 \end{itemize}
 
-Se pueden hacer uso de tablas, como el ejemplo de la tabla~\ref{tab:ejemplo}.
 
 
 
@@ -260,6 +294,11 @@ trabajo futuro.
 \bibitem{b3} \url{https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.KBinsDiscretizer.html}
 \bibitem{b4} \url{https://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html}
 \bibitem{b5} \url{https://scikit-learn.org/stable/modules/naive_bayes.html}
+\bibitem{b6} \url{https://www.ibm.com/cloud/learn/neural-networks}
+\bibitem{b7} \url{https://www.draw.io}
+\bibitem{b8} \url{https://scikit-learn.org/stable/modules/tree.html }
+
+
 \end{thebibliography}
 
 
