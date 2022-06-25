@@ -67,19 +67,16 @@
 
 % Resumen
 \begin{abstract}
-  Escribir aquí dos párrafos indicando el objetivo principal del trabajo, y un
-  resumen de las conclusiones obtenidas. Cabe mencionar que este documento se
-  ha confeccionado siguiendo el formato de conferencias de IEEE (ver la guía
-  para autores para más información, existen plantillas para Word y \LaTeX).
-  Este documento se debe emplear como guía, se pueden añadir nuevas secciones
-  según sea necesario. Es importante dotarlo de un número razonable de
-  referencias bibliográficas.
+
+  El objetivo principal de este trabajo es diseñar y evaluar distintos modelos de aprendizaje automático       relacional para clasificar los nodos de un grafo a partir de sus propiedades, y ver como interactua el modelo  antes y después de introducir los atributos relacionales. 
+  Para este fin, hemos realizado cuatro modelos diferentes: KNN, Naive Bayes, Árbol de Decisión y Redes Neuronales. Primeramente construimos el modelo, lo entrenamos y lo evaluamos, todo esto sin atributos relacionales. Seguidamente se calculan los atributos relacionales, en nuestro caso Centralidad de intermediación, agrupamiento (clustering) y grado (Degree). A continuación repetimos los pasos después de añadir los atriutos relacionales a el conjunto de datos. Finalmente comparamos los resultados relacionales con los no relacionales para concluir si los atributos relacionales mejoran o no el rendimiento de los modelos, y entonces elegiremos el modelo que nos haya proporcionado mejores resultados  en general (relacionales y no relacionales).
+
 \end{abstract}
 
 
 % Palabras claves
 \begin{IEEEkeywords}
-  Inteligencia Artificial, otras palabras clave…
+  Inteligencia Artificial, KNN, Naive Bayes, Árbol de Decisión, Redes Neuronales, Aprendizaje Automático Relacional...
 \end{IEEEkeywords}
 
 
@@ -127,9 +124,17 @@ Como este es un trabajo de desarrollo de modelos orientados al aprendizaje autom
 \item\textbf{Clustering} (agrupamiento): es una tarea que tiene como finalidad principal lograr el agrupamiento de nodos, para lograr construir subconjuntos de datos conocidos como Clusters.
 \item\textbf{Degree} (grado): Número de aristas (relaciones) que inciden sobre el nodo.
 \end{enumerate}
+
+
  
 \section{Algoritmos de Aprendizaje Automático}
 A continuación exponemos los algoritmos que hemos utilizado con nuestro dataset:
+
+\begin{figure} % opción de posicionamiento
+    \centering
+    \includegraphics[width=0.4\textwidth]{./ImagenesMemoria/TablaRelacional}
+    \caption{\label{fig:datasetRelacional}Tabla de Datos Relacional}
+\end{figure}
 
 \subsection{KNN}
 El algoritmo kNN (del inglés \emph{k Nearest Neighbors}, k vecinos más cercanos), es un clasificador de aprendizaje supervisado no paramétrico, por lo que la cantidad de parámetros del modelo coincide exactamente con la cantidad de ejemplos de entrenamiento. Se basa en la proximidad de los k nodos más cercanos calculando la cercanía a partir de los atributos, si estos fueran discretos sería necesaria una codificación de los mismo. 
@@ -243,7 +248,7 @@ A la hora de entrenar el modelo se le asginarán unos valores aleatorios a los p
 
 Cuando en el bucle del algoritmo se han considerado todos los ejemplos se dice que ha transcurrido una época.
 
-En nuestro caso (fíjese en la Fig. \ref{fig:dataset}), tenemos una capa de entrada de 3 neuronas, correspondientes a cada uno de los atributos usados para calcular el objetivo. Para la capa oculta hemos optado por un total de 10 neuronas con función de activación rectificador (ReLU). Al tratarse de un problema de clasificación binaria, la última capa de nuestra red neuronal estará compuesta por una neurona con funcion de activación sigmoide, ya que los valores de salida oscilarán entre 0 y 1. Finalmente el algoritmo nos dará una tasa de aciertos, cada usuario será clasificado como Partner (1) si esta es mayor que 0.5.
+En nuestro caso (fíjese en la Fig. \ref{fig:red}), tenemos una capa de entrada de 3 neuronas, correspondientes a cada uno de los atributos usados para calcular el objetivo. Para la capa oculta hemos optado por un total de 10 neuronas con función de activación rectificador (ReLU). Al tratarse de un problema de clasificación binaria, la última capa de nuestra red neuronal estará compuesta por una neurona con funcion de activación sigmoide, ya que los valores de salida oscilarán entre 0 y 1. Finalmente el algoritmo nos dará una tasa de aciertos, cada usuario será clasificado como Partner (1) si esta es mayor que 0.5.
 
 Para el entrenamiento de la Red Neuronal usamos la entropía cruzada binaria como funcion de coste  y el método de descenso por el gradiente (SGD, Stochastic Gradient Descent) para actualizar los pesos en la direccion $-\nabla C$.
 
@@ -263,16 +268,48 @@ Para la evaluación del modelo hemos dividido los datos en dos subconjuntos de p
 
 \section{Resultados}
 
+
 En esta sección se detallarán tanto los experimentos realizados como los
-resultados conseguidos:
-\begin{itemize}
-\item Los experimentos realizados, indicando razonadamente la configuración
-  empleada, qué se quiere determinar, y como se ha medido.
-\item Los resultados obtenidos en cada experimento, explicando en cada caso lo
-  que se ha conseguido.
-\item Análisis de los resultados, haciendo comparativas y obteniendo
-  conclusiones.
-\end{itemize}
+resultados conseguidos. Para poder medir el rendimiento de los modelos mediante un solo elemento, realizamos la media de los resultados obtenidos en validación cruzada, y usamos dicha media para comparar con el resto de modelos.
+
+\subsection{KNN}
+El único contratiempo que nos encontramos a la hora de evaluar el modelo, fue que al repasar nuestro trabajo, observamos que al realizar el algoritmo KNN, a penas se tenía en cuenta el atributo mature con respecto a views, ya que toma valores mucho mas elevados, haciendo necesario una normalización de los atributos.
+
+ El mejor resultado obtenido al aplicar validación cruzada al modelo sin atributos relacionales es: $0.946$, con el hiperparametro $k = 10$.  Al añadir los atributos relacionales la mejor tasa de acierto sigue siendo para $k = 10$, aunque el valor aumenta a: $0.958$.
+
+Como ya se ha mencionado, para comparar los resultados se hace uso de la media de las tasa de aciertos. Sin atributos relacionales la media da : $0.934$, mientras que con relacionales aumenta a : $0.955$. Podemos concluir entonces, que el añadir los atributos relacionales mejoran el redimiento del modelo KNN.
+
+\subsection{Naive Bayes}
+En este caso, estabamos bastante familiarizados con la realización del modelo gracias a las clases prácticas. Lo único que tuvimos que investigar (meidante la documentación de sklearn) fue el proceso de discretización, como ya hemos mencionado anteriormente.
+
+ El mejor resultado obtenido al aplicar validación cruzada al modelo sin atributos relacionales es: $0.952$, con el hiperparametro $k = 1$.  Al añadir los atributos relacionales la mejor tasa de acierto sigue siendo para $k = 1$, aunque el valor aumenta a: $0.957$.
+
+Como ya se ha mencionado, para comparar los resultados se hace uso de la media de las tasa de aciertos. Sin atributos relacionales la media da : $0.949$, mientras que con relacionales aumenta a : $0.955$. Podemos concluir entonces, que el añadir los atributos relacionales mejoran el redimiento del modelo Naive Bayes.
+
+
+\subsection{Árbol de Decisión}
+
+
+Para árboles tenemos el método $score$ de sklearn que nos permite calcular el rendimiento del modelo mediante un solo valor, siendo el resultado devuelto por este método el que usaremos para la evaluación del modelo. 
+
+Sin atributos relacionales la tasa de acierto devuelta es: $0.981$. Se puede observar que debido al peso de los otros atributos el algoritmo ignora el atributo mature. En cambio, al añadir los atributos relacionales el árbol cambia de forma drástica, pues ahora el algoritmo tiene en cuenta tanto los atributos relacionales como el atributo mature. No obstante esto empeora el rendimiento del modelo, pues la tasa de acierto baja: $0.980$.
+
+ Podemos concluir entonces, que el añadir los atributos relacionales empeoran el redimiento del modelo Árbol de Decisión.
+
+\subsection{Redes Neuronales}
+
+A la hora de realizar este modelo no tuvimos problema en cuanto al código (no más que alguna revisión a la documentación de las librerías), gracias a la los ejemplos dados en clase práctica. Sin embargo, para el comprensión del algoritmo, las estructuras de las capas o la función de pérdida, tuvimos que apoyarnos en el temario de la asignatura.
+
+Durante el entrenamiento de la red, la función de pérdida (binary cross-entropy) disminuye hasta: $0.631$, y la tasa de acierto aumenta hasta: $0.947$, al haber transcurrido 10 épocas. Evaluando con los atributos y objetivos de prueba, separados anteriormente, nos da un valor de la función de pérdida de: $0.353$ y de tasa de acierto de: $0.942$. Al añadir los atributos relacionales, y usando el mismo número de épocas, en el entrenamiento la función de pérdida disminuye hasta: $0.447$ y la tasa de acierto aumenta hasta: $0.945$. En la evaluación, con los atributos y objetivos de prueba la función de pérdida da una valor de: $0.438$ y un valor para la tasa de acierto de: $0.946$.  
+
+Como se puede observar, la tasa de acierto de la evaluación realizada aumenta ligeramente al añadir los atributos relacionales.
+
+\subsection{Comparación de los modelos}
+
+Hemos seleccionado por tanto el modelo de \textbf{Árboles de Decisión}, pues a pesar de que a añadir los atributos relacionales, baje la tasa de acierto, esta sigue siendo mayor que la obtenida con el resto de modelos que hemos probado. Es digno de mención que el modelo que más ha mejorado el rendimiento con la adicción de los atributos relacionales es KNN, pues la media de las tasas de acierto aumenta en un: $0.021$.
+
+
+
 
 
 
@@ -280,14 +317,22 @@ resultados conseguidos:
 
 \section{Conclusiones}
 
-Finalmente, se dedica la última sección para indicar las conclusiones obtenidas
-del trabajo. Se puede dedicar un párrafo para realizar un resumen sucinto del
-trabajo, con los experimentos y resultados. Seguidamente, uno o dos párrafos
-con conclusiones. Se suele dedicar un párrafo final con ideas de mejora y
-trabajo futuro.
 
 
-\section{Bibliografía}
+Este trabajo nos ha resultado muy útil para repasar la teoría de los modelos de aprendizaje automático y aclarar conceptos clave de redes neuronales, al ser este un tema bastante más complejo que el resto de modelos. A medida que hemos ido realizando el trabajo, nuestro conocimiento del mismo ha mejorado, a base de construir y comprender los distintos modelos usados. 
+
+Si bien al principio nos abrumaba el uso y estructura de la herramienta \LaTeX, a medida que le hemos dado uso nos hemos ido familiarizando con la herramienta, provocando así una mayor soltura al darle uso, o incluso resultando entretenido. Esto nos será de gran ayuda para trabajos futuros, ya sean en la carrera o fuera de ella.
+
+
+
+También nos has sorprendido lo fácil que nos ha resultado volver a manejar python con facilidad, pues llevabamos sin usar python en la carrera desde el primer curso. Esto ha sido gracias a los apuntes que se nos proporciona en la página de la asignatura.
+
+Para el control de versiones y trabajo simultáneo nos hemos apoyado en la herramienta github. Dicha herramienta nos ha facilitado la cooperación y comunicación, evitando así tener que hacer reuniones frecuentes, ahorrandonos tiempo de planificación. 
+
+En cuanto a las librerías usadas, nos han servido mucho para expandir nuestro conocimiento sobre librerías orientadas a la inteligencia artificial y dominar su uso. Iguialmente ha resultado muy útil para aprender y familiarizarnos con la lectura y comprensión la documentación de cualquier librería.\\
+
+
+
 \begin{thebibliography}{00}
 \bibitem{b1} \url{https://scikit-learn.org/stable/modules/preprocessing.html#normalization}
 \bibitem{b2} \url{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.DistanceMetric.html}
@@ -297,6 +342,10 @@ trabajo futuro.
 \bibitem{b6} \url{https://www.ibm.com/cloud/learn/neural-networks}
 \bibitem{b7} \url{https://www.draw.io}
 \bibitem{b8} \url{https://scikit-learn.org/stable/modules/tree.html }
+\bibitem{b9} \url{https://machinelearningmastery.com/binary-classification-tutorial-with-the-keras-deep-learning-library/ }
+\bibitem{b10} \url{https://machinelearningmastery.com/how-to-choose-loss-functions-when-training-deep-learning-neural-networks/}
+\bibitem{b11} Apuntes de la asignatura Inteligencia Artificial, Universidad de Sevilla (2021-2022)
+
 
 
 \end{thebibliography}
