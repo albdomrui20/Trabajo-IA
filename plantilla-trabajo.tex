@@ -199,6 +199,13 @@ El algoritmo CART para el aprendizaje del modelo es tal que dado un conjunto de 
 \textbf{arg mín  } \frac{|\mathscr{D}_{n}^{Izq}|}{|\mathscr{D}|}I(\mathscr{D}_{n}^{Izq})+ \frac{|\mathscr{D}_{n}^{Der}|}{|\mathscr{D}|}I(\mathscr{D}_{n}^{Der})
 \end{equation}
 
+
+\begin{figure} % opción de posicionamiento
+    \centering
+    \includegraphics[width=0.5\textwidth]{./ImagenesMemoria/Arbol}
+    \caption{\label{fig:arbolDecision}Árbol de Decisión}
+\end{figure}
+
 Una representación del algoritmo sería:
 
 \begin{pseudo}*
@@ -216,11 +223,7 @@ Una representación del algoritmo sería:
 
 
 
-\begin{figure} % opción de posicionamiento
-    \centering
-    \includegraphics[width=0.5\textwidth]{./ImagenesMemoria/Arbol}
-    \caption{\label{fig:arbolDecision}Árbol de Decisión}
-\end{figure}
+
 
  La función de impureza usada para una tarea de clasificación suele serel índice de Gini, pues estima la probabilidad de clasificar incorrectamente un ejemplo. Tal que: 
 \begin{equation}
