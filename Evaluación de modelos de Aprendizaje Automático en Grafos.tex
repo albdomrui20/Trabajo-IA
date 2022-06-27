@@ -295,7 +295,7 @@ Como ya se ha mencionado, para comparar los resultados se hace uso de la media d
 
 Para árboles tenemos el método $score$ de sklearn que nos permite calcular el rendimiento del modelo mediante un solo valor, siendo el resultado devuelto por este método el que usaremos para la evaluación del modelo. 
 
-Sin atributos relacionales la tasa de acierto devuelta es: $0.981$. Se puede observar que debido al peso de los otros atributos el algoritmo ignora el atributo mature. En cambio, al añadir los atributos relacionales el árbol cambia de forma drástica, pues ahora el algoritmo tiene en cuenta tanto los atributos relacionales como el atributo mature. No obstante esto empeora el rendimiento del modelo, pues la tasa de acierto baja: $0.980$.
+Sin atributos relacionales la tasa de acierto devuelta es: $0.981$. Se puede observar que debido al peso de los otros atributos el algoritmo se tiene menos en cuenta el atributo mature. En cambio, al añadir los atributos relacionales el árbol cambia de forma drástica, pues ahora el algoritmo tiene en cuenta tanto los atributos relacionales como el atributo mature. No obstante esto empeora el rendimiento del modelo, pues la tasa de acierto baja: $0.980$.
 
  Podemos concluir entonces, que el añadir los atributos relacionales empeoran el redimiento del modelo Árbol de Decisión.
 
